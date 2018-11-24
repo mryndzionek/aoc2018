@@ -1,0 +1,27 @@
+name:                aoc2018
+version:             0.1.0.0
+-- synopsis:
+-- description:
+homepage:            https://github.com/mryndzionek/aoc2018#readme
+license:             BSD3
+license-file:        LICENSE
+author:              Mariusz Ryndzionek
+maintainer:          mryndzionek@gmail.com
+copyright:           Mariusz Ryndzionek (c) 2018
+category:            Other
+build-type:          Simple
+cabal-version:       >=1.10
+extra-source-files:  README.md
+
+executable aoc2018
+  hs-source-dirs:      src
+  main-is:             Main.hs
+  ghc-options:         -threaded -rtsopts -with-rtsopts=-N -Wall
+  default-language:    Haskell2010
+  build-depends:       base >= 4.7 && < 5,
+                       containers, split, data-fix, safe, transformers,
+                       timeit, mtl, permutation, primes, array, astar,
+                       random,
+                       unordered-containers
+  other-modules:       Util
+                       Days.Days
