@@ -7,10 +7,9 @@ import qualified Data.Map.Strict as Map
 import qualified Data.Set as Set
 
 day1 :: Str -> (Integer, Integer)
-day1 (Str input) = let freq = map read $ lines $ filter (/= '+') input :: [Integer]
-                       freqs = cycle freq
+day1 (Str input) = let freq = map read $ lines $ filter (/= '+') input
                        freqSt (_, f', fs) f = let nf = (f + f') in (Set.member nf fs, nf, Set.insert nf fs)
-                       freqSets = map (\(a, b, _) -> (a, b)) $ scanl freqSt (False, 0, Set.empty) freqs
+                       freqSets = map (\(a, b, _) -> (a, b)) $ scanl freqSt (False, 0, Set.empty) (cycle freq)
                        fstTwice = snd . head $ dropWhile (not . fst) freqSets
                    in (sum freq, fstTwice)
 
