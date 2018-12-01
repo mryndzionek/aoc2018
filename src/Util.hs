@@ -9,6 +9,7 @@ module Util (
     safeLu,
     count,
     nPerms,
+    fileToStr,
     printSolution
 ) where
 
@@ -62,6 +63,9 @@ choose = StateT (\s -> s >>= \v -> return (v, delete v s))
 
 nPerms :: Eq a => Int -> [a] -> [[a]]
 nPerms n = evalStateT (replicateM n choose)
+
+fileToStr :: FilePath -> IO Str
+fileToStr fn = Str <$> readFile fn
 
 printSolution :: Int -> Solution -> IO ()
 printSolution number (Solution (i, a, s)) = do

@@ -16,4 +16,4 @@ day1 (Str input) = let freq = map read $ lines $ filter (/= '+') input :: [Integ
 
 solutions :: Map.Map Int (IO Solution)
 solutions = Map.fromList [
-    (  1, mkDay (day1, Str <$> readFile "inputs/day1.txt", (454, 566) ))]
+    (  1, mkDay (day1, fileToStr "inputs/day1.txt", (454, 566) ))]
