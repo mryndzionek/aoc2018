@@ -10,14 +10,17 @@ module Util (
     count,
     nPerms,
     fileToStr,
-    printSolution
+    printSolution,
+    firstRepeated
 ) where
 
 import Data.List
+import qualified Data.Set as Set
 import qualified Data.Map.Strict as Map
 import System.TimeIt
 import Data.Numbers.Primes
 import Control.Monad.State
+import Safe
 
 data Solution = forall a b. (Show a, Eq a, Read b) => Solution (b, a, b -> a)
 mkDay :: (Show a, Eq a, Read b, Applicative f) => (b -> a, f b, a) -> f Solution
@@ -74,3 +77,9 @@ printSolution number (Solution (i, a, s)) = do
             if sol == a then
                  show sol ++ ": "
             else "\x1b[31mExpected: " ++ show a ++ " Got: " ++ show sol ++ "\x1b[0m "               
+
+firstRepeated :: Ord a => [a] -> Maybe a
+firstRepeated [] = Nothing
+firstRepeated xs = let f (a, s) b = (b, Set.insert a s)
+                       g = scanl f (head xs, Set.empty) (tail xs)
+    in fst <$> headMay (dropWhile (\ (a, b) -> not $ Set.member a b) g)
