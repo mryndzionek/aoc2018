@@ -4,7 +4,6 @@ module Days.Days (
 
 import Util
 import Control.Exception.Assert
-import Data.List
 import qualified Data.Map.Strict as Map
 import qualified Data.Set as Set
 
@@ -20,10 +19,10 @@ day2 (Str input) = let ids = lines input
                        counts c = map fst . (count :: [Int] -> [(Int, Integer)]) . map snd $ count c
                        find' n = filter ((n `elem`) . counts) ids
                        checksum = let (twos, threes) = (find' 2, find' 3) in length twos * length threes
-                       markDiffering = zipWith (\c1 c2 -> if c1 == c2 then c1 else '?')
-                       candidates = nub $ filter ((== 1) . length . filter ('?' ==)) [markDiffering a b | a <- ids, b <- ids, a /= b]
-                       correct = byPred assert "Only one candidate available" ((1 ==) . length)
-                                        candidates (filter ('?' /=) . head $ candidates)
+                       isCandidate i1 i2 = (1 ==) . length . filter id $ zipWith (/=) i1 i2
+                       candidates = [(a, b) | a <- ids, b <- ids, a /= b, isCandidate a b]
+                       correct = byPred assert "Only one candidate available" ((1 ==) . length) candidates
+                                        (map fst . filter (uncurry (==)) . uncurry zip) $ head candidates
                    in  (checksum, correct)
 
 solutions :: Map.Map Int (IO Solution)
