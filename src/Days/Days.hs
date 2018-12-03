@@ -1,6 +1,6 @@
 module Days.Days (
     solutions,
-    day3Draw
+    extras
 ) where
 
 import Util
@@ -69,3 +69,6 @@ solutions = Map.fromList [
     (  2, mkDay (day2, fileToStr "inputs/day2.txt", (8610, "iosnxmfkpabcjpdywvrtahluy") )),
     (  3, mkDay (day3, fileToStr "inputs/day3.txt", (118539, 1270) ))
     ]
+
+extras :: IO ()
+extras = fileToStr "inputs/day3.txt" >>= day3Draw

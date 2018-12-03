@@ -5,6 +5,7 @@ import qualified Data.Map.Strict as Map
 import Control.Applicative
 import qualified Control.Exception as Ex
 
+import System.TimeIt
 import System.Environment
 
 import Safe
@@ -30,10 +31,11 @@ handle (a:_) = case Map.lookup p solutions of
     where
     p = read a :: Int
 
-handle [] = mapM_ (\(n, s) -> s >>= printSolution n) $ Map.toList solutions
+handle [] = do
+    mapM_ (\(n, s) -> s >>= printSolution n) $ Map.toList solutions
+    timeIt $ putStr "Extras: " >> extras
 
 main :: IO ()
 main = do
     args <- getArgs
     handle args
-    fileToStr "inputs/day3.txt" >>= day3Draw

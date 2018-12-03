@@ -6,7 +6,6 @@ module Util (
     pfactors,
     divisors,
     fibs,
-    safeLu,
     count,
     nPerms,
     fileToStr,
@@ -30,6 +29,14 @@ newtype Str = Str String
 instance Read Str where
     readsPrec _ input = [(Str input, "")]
 
+printSolution :: Int -> Solution -> IO ()
+printSolution number (Solution (i, a, s)) = do
+        let sol = s i
+        timeIt $ putStr $ "Day " ++ show number ++ ": " ++
+            if sol == a then
+                    show sol ++ ": "
+            else "\x1b[31mExpected: " ++ show a ++ " Got: " ++ show sol ++ "\x1b[0m "
+
 pfactors :: Int -> [Int]
 pfactors n = factor n primes
   where
@@ -49,11 +56,6 @@ divisors n = (1:) $ nub $ concat [ [x, div n x] | x <- [2..limit], rem n x == 0 
 fibs :: [Integer]
 fibs = unfoldr (\(a, b) -> Just (a, (b, a + b))) (1, 2)
 
-safeLu :: Int -> [a] -> Maybe a
-safeLu i a
-    | (i >= 0) && (length a > i) = Just (a !! i)
-    | otherwise = Nothing
-
 count :: (Ord k, Num a, Foldable t) => t k -> [(k, a)]
 count a = Map.toList $ foldr f Map.empty a
     where
@@ -68,15 +70,7 @@ nPerms :: Eq a => Int -> [a] -> [[a]]
 nPerms n = evalStateT (replicateM n choose)
 
 fileToStr :: FilePath -> IO Str
-fileToStr fn = Str <$> readFile fn
-
-printSolution :: Int -> Solution -> IO ()
-printSolution number (Solution (i, a, s)) = do
-        let sol = s i
-        timeIt $ putStr $ "Day " ++ show number ++ ": " ++
-            if sol == a then
-                 show sol ++ ": "
-            else "\x1b[31mExpected: " ++ show a ++ " Got: " ++ show sol ++ "\x1b[0m "               
+fileToStr fn = Str <$> readFile fn              
 
 firstRepeated :: Ord a => [a] -> Maybe a
 firstRepeated [] = Nothing
