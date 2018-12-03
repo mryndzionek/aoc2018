@@ -41,7 +41,9 @@ day3_ (Str input) = let claims = parse . clearout <$> lines input
                         overlappingArea = length $ Map.filter (>1) overlappingMap
                         claimToCords (_, x, y, w, h) = [(x', y') | x' <- [x..x+w-1], y' <- [y..y+h-1]]
                         checkOverlap c = all (==1) $ map (fromMaybe 0 . (`Map.lookup` overlappingMap)) $ claimToCords c
-                        noOverlap = head $ filter checkOverlap claims
+                        noOverlap = let candidates = filter checkOverlap claims in
+                            byPred assert "Only one candidate available" ((1 ==) . length) candidates
+                                (head candidates)
                     in (claims, overlappingMap, overlappingArea, noOverlap)
 
 day3Draw :: Str -> IO ()
