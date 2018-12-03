@@ -36,3 +36,4 @@ main :: IO ()
 main = do
     args <- getArgs
     handle args
+    fileToStr "inputs/day3.txt" >>= day3Draw

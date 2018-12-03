@@ -21,7 +21,7 @@ executable aoc2018
   build-depends:       base >= 4.7 && < 5,
                        containers, split, data-fix, safe, transformers,
                        timeit, mtl, permutation, primes, array, astar,
-                       random, assert,
+                       random, assert, JuicyPixels, listsafe,
                        unordered-containers
   other-modules:       Util
                        Days.Days
