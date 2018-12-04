@@ -3,14 +3,16 @@ module Days.Days (
     extras
 ) where
 
-import Util
 import Control.Exception.Assert
 import Codec.Picture
-import Data.Function (on)
 import Data.Maybe (fromMaybe)
 import Data.List (nub, foldl')
-import qualified Data.List.Safe as S
+import Data.Function (on)
 import qualified Data.Map.Strict as Map
+import qualified Data.List.Safe as S
+
+import Util
+import Days.Day4
 
 day1 :: Str -> (Integer, Maybe Integer)
 day1 (Str input) = let freq = map read $ lines $ filter (/= '+') input
@@ -67,7 +69,8 @@ solutions :: Map.Map Int (IO Solution)
 solutions = Map.fromList [
     (  1, mkDay (day1, fileToStr "inputs/day1.txt", (454, Just 566) )),
     (  2, mkDay (day2, fileToStr "inputs/day2.txt", (8610, "iosnxmfkpabcjpdywvrtahluy") )),
-    (  3, mkDay (day3, fileToStr "inputs/day3.txt", (118539, 1270) ))
+    (  3, mkDay (day3, fileToStr "inputs/day3.txt", (118539, 1270) )),
+    (  4, mkDay (day4, fileToStr "inputs/day4.txt", (Just 67558, Just 78990) ))
     ]
 
 extras :: IO ()
