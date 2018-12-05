@@ -5,6 +5,7 @@ module Days.Days (
 
 import Control.Exception.Assert
 import Codec.Picture
+import Data.Char
 import Data.Maybe (fromMaybe)
 import Data.List (nub, foldl')
 import Data.Function (on)
@@ -65,12 +66,24 @@ day3 input = let (_, _, overlappingArea, noOverlap') = day3_ input
                  noOverlap = let (id', _, _, _, _) = noOverlap' in id'
              in (overlappingArea, noOverlap)
 
+day5 :: Str -> (Int, Int)
+day5 (Str input) = let polymer = head $ lines input
+                       react = length . S.foldl' reduce ""
+                       reduce b a | null b = [a]
+                                  | trigger a (head b) = tail b
+                                  | otherwise = a:b
+                       trigger a b = ((==32) . abs) (ord a - ord b)
+                       polymers = fmap (($ polymer) . (\x -> filter (\y -> toLower y /= x))) ['a' .. 'z']
+                       minimal = minimum $ fmap react polymers
+                  in (react polymer, minimal)
+
 solutions :: Map.Map Int (IO Solution)
 solutions = Map.fromList [
     (  1, mkDay (day1, fileToStr "inputs/day1.txt", (454, Just 566) )),
     (  2, mkDay (day2, fileToStr "inputs/day2.txt", (8610, "iosnxmfkpabcjpdywvrtahluy") )),
     (  3, mkDay (day3, fileToStr "inputs/day3.txt", (118539, 1270) )),
-    (  4, mkDay (day4, fileToStr "inputs/day4.txt", (Just 67558, Just 78990) ))
+    (  4, mkDay (day4, fileToStr "inputs/day4.txt", (Just 67558, Just 78990) )),
+    (  5, mkDay (day5, fileToStr "inputs/day5.txt", (9526, 6694) ))
     ]
 
 extras :: IO ()
