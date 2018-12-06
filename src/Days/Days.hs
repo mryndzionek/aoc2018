@@ -14,6 +14,7 @@ import qualified Data.List.Safe as S
 
 import Util
 import Days.Day4
+import Days.Day6
 
 day1 :: Str -> (Integer, Maybe Integer)
 day1 (Str input) = let freq = map read $ lines $ filter (/= '+') input
@@ -83,8 +84,11 @@ solutions = Map.fromList [
     (  2, mkDay (day2, fileToStr "inputs/day2.txt", (8610, "iosnxmfkpabcjpdywvrtahluy") )),
     (  3, mkDay (day3, fileToStr "inputs/day3.txt", (118539, 1270) )),
     (  4, mkDay (day4, fileToStr "inputs/day4.txt", (Just 67558, Just 78990) )),
-    (  5, mkDay (day5, fileToStr "inputs/day5.txt", (9526, 6694) ))
+    (  5, mkDay (day5, fileToStr "inputs/day5.txt", (9526, 6694) )),
+    (  6, mkDay (day6, fileToStr "inputs/day6.txt", (3290, 45602) ))
     ]
 
 extras :: IO ()
-extras = fileToStr "inputs/day3.txt" >>= day3Draw
+extras = do
+    fileToStr "inputs/day3.txt" >>= day3Draw
+    fileToStr "inputs/day6.txt" >>= day6Draw

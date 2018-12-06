@@ -26,3 +26,4 @@ executable aoc2018
   other-modules:       Util
                        Days.Days
                        Days.Day4
+                       Days.Day6
