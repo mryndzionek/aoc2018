@@ -1,17 +1,19 @@
 module Days.Day6 (day6, day6Draw) where
 
-import Codec.Picture
 import Data.List.Split
 import Data.Function (on)
 import qualified Data.List.Safe as S
 import qualified Data.Map.Strict as Map
 import qualified Data.Set as Set
-import Data.Maybe (fromMaybe)
 
 import Util
 
+import Diagrams.Prelude hiding (image)
+import Diagrams.Backend.Rasterific
+import Data.Colour.Palette.ColorSet
+
 points :: Str -> [(Int, Int)]
-points (Str input) = ((\ (a : (b : _)) -> (a, b)) . map read . splitOn ",") <$> lines input
+points (Str input) = (\ (a : (b : _)) -> (a, b)) . map read . splitOn "," <$> lines input
 
 genCords :: (Int, Int) -> (Int, Int) -> Int -> Set.Set (Int, Int)
 genCords (x1, y1) (x2, y2) d' = Set.fromList [(x, y) | y <- [y1-d'..y2+d'], x <- [x1-d'..x2+d']]
@@ -45,14 +47,19 @@ day6 input = let pts = points input
 
 day6Draw :: Str -> IO ()
 day6Draw input = let pts = points input
-                     c = genCords (0, 0) (600, 600) 0
+                     (w, h) = (400, 400) :: (Int, Int)
+                     c = genCords (0, 0) (w - 1, h - 1) 0
                      m1 = getCordMap pts c
                      m2 = Set.foldl' crit Map.empty c
                         where crit m a = let s = sum $ fmap (manhattan a) pts
-                                         in if s < 10000 then m else Map.insert a (0, s `rem` 255) m
-                     palette (x, y) = cycle [PixelRGB8 r g b | let cols = [0, 64, 128, 255],
-                         r <- cols, g <- cols, b <- cols] S.!! (x + y)
-                     pixelRenderer m x y = fromMaybe (PixelRGB8 0 0 0) (Map.lookup (x, y) m >>= palette)
+                                         in if abs (s - 10000) < 100 then m else Map.insert a s m
+                     toSqr :: Kolor -> QDiagram B V2 Double Any
+                     toSqr cl = square 1 # lw none # fc cl # opacity 1.0
+                     i1 = position . Map.elems $ Map.mapWithKey (\(x, y) (a, b) -> (p2 (fromIntegral x, fromIntegral y),
+                                toSqr $ infiniteWebColors !! (a + b))) m1
+                     i2 = position . Map.elems $ Map.mapWithKey (\(x, y) a -> (p2 (fromIntegral x, fromIntegral y),
+                                toSqr $ rybColor a)) m2
+                     render' fp w' h' i = renderRasterific fp (dims2D (fromIntegral w') (fromIntegral h')) (i # bg black :: Diagram B)
                   in do
-                    writePng "images/day6_1.png" $ generateImage (pixelRenderer m1) 600 600
-                    writePng "images/day6_2.png" $ generateImage (pixelRenderer m2) 600 600
+                    render' "images/day6_1.png" w h i1
+                    render' "images/day6_2.png" w h i2

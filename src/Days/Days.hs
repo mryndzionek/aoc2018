@@ -1,19 +1,19 @@
+{-# LANGUAGE FlexibleContexts, TypeFamilies #-}
 module Days.Days (
     solutions,
     extras
 ) where
 
 import Control.Exception.Assert
-import Codec.Picture
 import Data.Char
-import Data.Maybe (fromMaybe)
-import Data.List (nub, foldl')
+import Data.List (nub)
 import Data.Function (on)
 import qualified Data.Map.Strict as Map
 import qualified Data.List.Safe as S
 
 import Util
 import Days.Day4
+import Days.Day3
 import Days.Day6
 
 day1 :: Str -> (Integer, Maybe Integer)
@@ -32,40 +32,6 @@ day2 (Str input) = let ids = lines input
                        correct = byPred assert "Only one candidate available" ((1 ==) . length) candidates
                                         (map fst . filter (uncurry (==)) . uncurry zip) $ head candidates
                    in  (checksum, correct)
-
-type Claim = (Int, Int, Int, Int, Int)
-day3_ :: Str -> ([Claim], Map.Map (Int, Int) Integer, Int, Claim)
-day3_ (Str input) = let claims = parse . clearout <$> lines input
-                        clearout = map (\c -> if c `elem` "@:x" then ',' else c) . 
-                            filter (`notElem` " #")
-                        parse s = read $ "(" ++ s ++ ")"
-                        overlappingMap :: Map.Map (Int, Int) Integer
-                        overlappingMap = foldl' addArea Map.empty claims
-                               where addArea m c = foldl' (\m' p' -> Map.insertWith (+) p' 1 m') m $ claimToCords c
-                        overlappingArea = length $ Map.filter (>1) overlappingMap
-                        claimToCords (_, x, y, w, h) = [(x', y') | x' <- [x..x+w-1], y' <- [y..y+h-1]]
-                        checkOverlap c = all (==1) $ map (fromMaybe 0 . (`Map.lookup` overlappingMap)) $ claimToCords c
-                        noOverlap = let candidates = filter checkOverlap claims in
-                            byPred assert "Only one candidate available" ((1 ==) . length) candidates
-                                (head candidates)
-                    in (claims, overlappingMap, overlappingArea, noOverlap)
-
-day3Draw :: Str -> IO ()
-day3Draw input = let (_, overlappingMap, _, noOverlap) = day3_ input
-                     img = let (_, x', y', w, h) = noOverlap
-                               pts = [(x'', y'') | x'' <- [x'..x'+w-1], y'' <- [y'..y'+h-1]]
-                           in foldl' (\m p -> Map.insert p (-1) m) overlappingMap pts
-                     palette :: Integer -> Maybe PixelRGB8
-                     palette x = if x < 0 then Just $ PixelRGB8 255 0 0 else
-                        cycle [PixelRGB8 r g b | let cols = [0, 64, 128, 255], r <- cols, g <- cols, b <- cols] S.!! x
-                     pixelRenderer x y = fromMaybe (PixelRGB8 200 200 200)
-                        (Map.lookup (x, y) img >>= (palette . (* 9) . fromIntegral))
-                 in writePng "images/day3.png" $ generateImage pixelRenderer 1000 1000
-
-day3 :: Str -> (Int, Int)
-day3 input = let (_, _, overlappingArea, noOverlap') = day3_ input
-                 noOverlap = let (id', _, _, _, _) = noOverlap' in id'
-             in (overlappingArea, noOverlap)
 
 day5 :: Str -> (Int, Int)
 day5 (Str input) = let polymer = head $ lines input
