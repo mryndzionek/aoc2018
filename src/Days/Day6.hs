@@ -72,6 +72,7 @@ day6Draw input =
              in if abs (s - 10000) < 100
                   then m
                   else Map.insert a (s `rem` 255) m
+      markPoints s m = let (_, m') = Map.partitionWithKey (\k _ -> any (<s) $ map (manhattan k) pts) m in m'
       colToPixel col =
         let rgb = toSRGB24 col
          in Just $
@@ -81,6 +82,6 @@ day6Draw input =
       pixelRenderer p m x y =
         fromMaybe (PixelRGB8 0 0 0) (Map.lookup (x, y) m >>= p)
    in do writePng "images/day6_1.png" $
-           generateImage (pixelRenderer palette1 m1) 600 600
+           generateImage (pixelRenderer palette1 (markPoints 2 m1)) 600 600
          writePng "images/day6_2.png" $
-           generateImage (pixelRenderer palette2 m2) 600 600
+           generateImage (pixelRenderer palette2 (markPoints 4 m2)) 600 600
