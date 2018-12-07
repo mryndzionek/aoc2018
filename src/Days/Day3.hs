@@ -40,4 +40,4 @@ day3Draw input = let claims = getClaims input
                                                  rect (fromIntegral w) (fromIntegral h) # lw none # fc c)
                      colors  = brewerSet Set2 8
                      example = position (map toSquare claims) # bg grey
-                 in renderRasterific "images/day3.png" (dims2D 500 500) (example :: Diagram B)
+                 in renderRasterific "images/day3.png" (dims2D 1000 1000) (example :: Diagram B)
