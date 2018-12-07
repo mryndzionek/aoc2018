@@ -21,7 +21,7 @@ executable aoc2018
   build-depends:       base >= 4.7 && < 5,
                        containers, split, data-fix, safe, transformers,
                        timeit, mtl, permutation, primes, array, astar,
-                       random, assert, listsafe,
+                       random, assert, listsafe, JuicyPixels,
                        unordered-containers, time, diagrams, diagrams-lib,
                        diagrams-rasterific, palette, colour
   other-modules:       Util

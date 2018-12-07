@@ -5,12 +5,13 @@ import Data.Function (on)
 import qualified Data.List.Safe as S
 import qualified Data.Map.Strict as Map
 import qualified Data.Set as Set
+import Data.Maybe (fromMaybe)
 
 import Util
 
-import Diagrams.Prelude hiding (image)
-import Diagrams.Backend.Rasterific
+import Codec.Picture
 import Data.Colour.Palette.ColorSet
+import Data.Colour.SRGB
 
 points :: Str -> [(Int, Int)]
 points (Str input) = (\ (a : (b : _)) -> (a, b)) . map read . splitOn "," <$> lines input
@@ -47,19 +48,16 @@ day6 input = let pts = points input
 
 day6Draw :: Str -> IO ()
 day6Draw input = let pts = points input
-                     (w, h) = (400, 400) :: (Int, Int)
-                     c = genCords (0, 0) (w - 1, h - 1) 0
+                     c = genCords (0, 0) (600, 600) 0
                      m1 = getCordMap pts c
                      m2 = Set.foldl' crit Map.empty c
                         where crit m a = let s = sum $ fmap (manhattan a) pts
-                                         in if abs (s - 10000) < 100 then m else Map.insert a s m
-                     toSqr :: Kolor -> QDiagram B V2 Double Any
-                     toSqr cl = square 1 # lw none # fc cl # opacity 1.0
-                     i1 = position . Map.elems $ Map.mapWithKey (\(x, y) (a, b) -> (p2 (fromIntegral x, fromIntegral y),
-                                toSqr $ infiniteWebColors !! (a + b))) m1
-                     i2 = position . Map.elems $ Map.mapWithKey (\(x, y) a -> (p2 (fromIntegral x, fromIntegral y),
-                                toSqr $ rybColor a)) m2
-                     render' fp w' h' i = renderRasterific fp (dims2D (fromIntegral w') (fromIntegral h')) (i # bg black :: Diagram B)
+                                          in if abs (s - 10000) < 100 then m else Map.insert a (s `rem` 255) m
+                     colToPixel col = let rgb = toSRGB24 col
+                                        in Just $ PixelRGB8 (channelRed rgb) (channelGreen rgb) (channelBlue rgb)
+                     palette1 (x, y) = colToPixel $ infiniteWebColors !! (x + y)
+                     palette2 a = colToPixel $ rybColor a
+                     pixelRenderer p m x y = fromMaybe (PixelRGB8 0 0 0) (Map.lookup (x, y) m >>= p)
                   in do
-                    render' "images/day6_1.png" w h i1
-                    render' "images/day6_2.png" w h i2
+                    writePng "images/day6_1.png" $ generateImage (pixelRenderer palette1 m1) 600 600
+                    writePng "images/day6_2.png" $ generateImage (pixelRenderer palette2 m2) 600 600
