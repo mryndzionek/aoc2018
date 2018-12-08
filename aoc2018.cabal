@@ -30,3 +30,4 @@ executable aoc2018
                        Days.Day4
                        Days.Day6
                        Days.Day7
+                       Days.Day8

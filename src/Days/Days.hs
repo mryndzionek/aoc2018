@@ -17,6 +17,7 @@ import Days.Day3
 import Days.Day4
 import Days.Day6
 import Days.Day7
+import Days.Day8
 import Util
 
 day1 :: Str -> (Integer, Maybe Integer)
@@ -72,6 +73,7 @@ solutions =
     , (5, mkDay (day5, fileToStr "inputs/day5.txt", (9526, 6694)))
     , (6, mkDay (day6, fileToStr "inputs/day6.txt", (3290, 45602)))
     , (7, mkDay (day7, fileToStr "inputs/day7.txt", ("MNOUBYITKXZFHQRJDASGCPEVWL", 893)))
+    , (8, mkDay (day8, fileToStr "inputs/day8.txt", (43996, 35189)))
     ]
 
 extras :: IO ()
