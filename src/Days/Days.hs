@@ -1,5 +1,4 @@
 {-# LANGUAGE FlexibleContexts, TypeFamilies #-}
-{-# LANGUAGE OverloadedStrings #-}
 
 module Days.Days
   ( solutions

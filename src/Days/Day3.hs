@@ -21,10 +21,10 @@ getClaims (Str input) =
   let clearout =
         map
           (\c ->
-             if c `elem` "@:x"
+             if c `elem` ("@:x" :: String)
                then ','
                else c) .
-        filter (`notElem` " #")
+        filter (`notElem` (" #" :: String))
       parse s = read $ "(" ++ s ++ ")"
    in parse . clearout <$> lines input
 
