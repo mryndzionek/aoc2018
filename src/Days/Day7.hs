@@ -1,8 +1,9 @@
 module Days.Day7
   ( day7
+  , day7Draw
   ) where
 
-import Control.Lens
+import Control.Lens hiding ((#))
 import Data.Char
 import qualified Data.List.Safe as S
 import Data.List.Split
@@ -12,10 +13,57 @@ import qualified Data.Set as Set
 import qualified Data.Text as T
 import Data.Tuple
 
+
+import Data.Colour.Palette.ColorSet
+import Diagrams.Backend.Rasterific
+import qualified Diagrams.Prelude as D
+import Diagrams.Prelude ((#))
+
 import Util
 
 day7 :: Str -> (T.Text, Int)
-day7 (Str input) =
+day7 input =
+  let (a, b) = day7_ input
+   in (a, (^. _4) . head $ dropWhile (not . null . (^. _1)) b)
+
+getPositions :: [[(Int, Char)]] -> Map.Map Char Int
+getPositions states =
+  let s = map (map snd) states
+      f m a =
+        let x = Set.difference (Set.fromList a) (Map.keysSet m)
+            mx = maximum (Map.elems m)
+        in Map.union m (Map.fromList $ zip (Set.toList x) [mx + 1 ..])
+  in S.foldl f (Map.fromList $ zip (head s) [0 ..]) (tail s)
+
+day7Draw :: Str -> IO ()
+day7Draw input =
+  let (_, b) = day7_ input
+      states = map (^. _1) $ takeWhile (not . null . (^. _1)) b
+      pos = getPositions states :: Map.Map Char Int
+      row ((y0, h), s) = map (rect y0 h) s
+      rect ::
+           Int
+        -> Int
+        -> (Int, Char)
+        -> (D.P2 Double, D.QDiagram B D.V2 Double D.Any)
+      rect y h (_, l) =
+        let x = 30 * fromMaybe 0 (Map.lookup l pos)
+         in ( D.p2 (fromIntegral x, fromIntegral y + (fromIntegral h / 2))
+            , D.rect (fromIntegral (30 :: Int)) (fromIntegral h) # D.lw D.none #
+              D.fc (webColors $ ord l))
+      example =
+        let hs = map (fst . head) states
+            ys = S.scanl' (+) 0 hs
+            dy = zip ys  $ map (+ 1) hs
+         in D.position (concatMap row $ zip dy states) # D.bg D.black
+   in renderRasterific
+        "images/day7_2.png"
+        (D.mkHeight 1000)
+        (example :: D.Diagram B)
+
+
+day7_ :: Str -> (T.Text, [([(Int, Char)], String, String, Int)])
+day7_ (Str input) =
   let steps =
         fromMaybe [] $
         mapM
@@ -61,7 +109,5 @@ day7 (Str input) =
               S.sort $
               map expand (take free i') ++ map (\(a, b) -> (a - t', b)) (tail w)
          in (w', drop free i', d', t + t')
-      parallelOrder =
-        (^. _4) . head . dropWhile (not . null . (^. _1)) $
-        iterate process (map expand work, idle, done, 0)
+      parallelOrder = iterate process (map expand work, idle, done, 0)
    in (order, parallelOrder)

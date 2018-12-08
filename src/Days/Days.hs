@@ -79,3 +79,4 @@ extras :: IO ()
 extras = do
   fileToStr "inputs/day3.txt" >>= day3Draw
   fileToStr "inputs/day6.txt" >>= day6Draw
+  fileToStr "inputs/day7.txt" >>= day7Draw
