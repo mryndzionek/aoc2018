@@ -22,9 +22,9 @@ executable aoc2018
   build-depends:       base >= 4.7 && < 5,
                        containers, split, data-fix, safe, transformers,
                        timeit, mtl, permutation, primes, array, astar,
-                       random, assert, listsafe, JuicyPixels,
+                       random, assert, listsafe, JuicyPixels, vector,
                        unordered-containers, time, diagrams, diagrams-lib,
-                       diagrams-rasterific, palette, colour, text, lens
+                       diagrams-rasterific, palette, colour, text, lens, pointedlist
   other-modules:       Util
                        Days.Days
                        Days.Day3
@@ -32,3 +32,4 @@ executable aoc2018
                        Days.Day6
                        Days.Day7
                        Days.Day8
+                       Days.Day9
