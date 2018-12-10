@@ -12,9 +12,11 @@ module Util
   , fileToStr
   , printSolution
   , firstRepeated
+  , firstWith
   ) where
 
 import Control.Monad.State
+import Data.Function (on)
 import Data.List
 import qualified Data.Map.Strict as Map
 import Data.Numbers.Primes
@@ -90,3 +92,6 @@ firstRepeated xs =
   let f (a, s) b = (b, Set.insert a s)
       g = scanl f (head xs, Set.empty) (tail xs)
    in fst <$> headMay (dropWhile (\(a, b) -> not $ Set.member a b) g)
+
+firstWith :: (b1 -> b1 -> Bool) -> (b2 -> b1) -> [b2] -> b2
+firstWith f g a = fst . head $ dropWhile (not . uncurry (f `on` g)) $ zip a (tail a)

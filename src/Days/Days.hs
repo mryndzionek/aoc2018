@@ -18,6 +18,7 @@ import Days.Day6
 import Days.Day7
 import Days.Day8
 import Days.Day9
+import Days.Day10
 import Util
 
 day1 :: Str -> (Integer, Maybe Integer)
@@ -58,7 +59,6 @@ day5 (Str input) =
         fmap (($ polymer) . (\x -> filter (\y -> toLower y /= x))) ['a' .. 'z']
       minimal = minimum $ fmap react polymers
    in (react polymer, minimal)
-
 solutions :: Map.Map Int (IO Solution)
 solutions =
   Map.fromList
@@ -72,9 +72,14 @@ solutions =
     , (4, mkDay (day4, fileToStr "inputs/day4.txt", (Just 67558, Just 78990)))
     , (5, mkDay (day5, fileToStr "inputs/day5.txt", (9526, 6694)))
     , (6, mkDay (day6, fileToStr "inputs/day6.txt", (3290, 45602)))
-    , (7, mkDay (day7, fileToStr "inputs/day7.txt", ("MNOUBYITKXZFHQRJDASGCPEVWL", 893)))
+    , ( 7
+      , mkDay
+          ( day7
+          , fileToStr "inputs/day7.txt"
+          , ("MNOUBYITKXZFHQRJDASGCPEVWL", 893)))
     , (8, mkDay (day8, fileToStr "inputs/day8.txt", (43996, 35189)))
     , (9, mkDay (day9, pure (477, 70851, 100 * 70851), (374690, 3009951158)))
+    , (10, mkDay (day10, fileToStr "inputs/day10.txt", ("EKALLKLB", 10227)))
     ]
 
 extras :: IO ()
@@ -82,3 +87,4 @@ extras = do
   fileToStr "inputs/day3.txt" >>= day3Draw
   fileToStr "inputs/day6.txt" >>= day6Draw
   fileToStr "inputs/day7.txt" >>= day7Draw
+  fileToStr "inputs/day10.txt" >>= day10Draw
