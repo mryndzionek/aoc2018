@@ -26,7 +26,7 @@ executable aoc2018
                        random, assert, listsafe, JuicyPixels, vector,
                        unordered-containers, time, diagrams, diagrams-lib,
                        diagrams-rasterific, palette, colour, text, lens, pointedlist,
-                       megaparsec, matrix
+                       megaparsec, matrix, parallel
   other-modules:       Util
                        Days.Days
                        Days.Day3

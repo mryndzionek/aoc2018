@@ -1,8 +1,10 @@
 {-# LANGUAGE BangPatterns #-}
+
 module Days.Day11
   ( day11
   ) where
 
+import Control.Parallel.Strategies
 import Data.Function (on)
 import qualified Data.List.Safe as S
 import Data.Matrix
@@ -39,7 +41,7 @@ powerLevels pg n =
   S.scanl'
     (\b a -> submatrix 1 (nrows a) 1 (ncols a) b + a)
     pg
-    (fmap (calc pg) [2 .. n])
+    ((parMap rdeepseq) (calc pg) [2 .. n])
 
 day11 :: Int -> ((Int, Int), (Int, (Int, Int)))
 day11 sn =
