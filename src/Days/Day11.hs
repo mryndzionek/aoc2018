@@ -1,3 +1,4 @@
+{-# LANGUAGE BangPatterns #-}
 module Days.Day11
   ( day11
   ) where
@@ -5,6 +6,7 @@ module Days.Day11
 import Data.Function (on)
 import qualified Data.List.Safe as S
 import Data.Matrix
+import qualified Data.Vector as V
 
 size :: Int
 size = 300
@@ -24,10 +26,9 @@ powerGrid sn = matrix size size (powerLevel sn)
 calc :: Matrix Int -> Int -> Matrix Int
 calc pg d =
   let d' = size - d + 1
-      sub x y m =
-        sum (submatrix (x + d - 1) (x + d - 1) y (y + d - 1) m) +
-        sum (submatrix x (x + d - 2) (y + d - 1) (y + d - 1) m)
-      gen (x, y) = sub x y pg
+      gen (x, y) =
+        sum (V.take d $ V.drop (y - 1) $ getRow (x + d - 1) pg) +
+        sum (V.take (d - 1) $ V.drop (x - 1) $ getCol (y + d - 1) pg)
    in matrix d' d' gen
 
 toIndexed :: Matrix a -> Matrix (a, (Int, Int))
@@ -38,13 +39,13 @@ powerLevels pg n =
   S.scanl'
     (\b a -> submatrix 1 (nrows a) 1 (ncols a) b + a)
     pg
-    (map (calc pg) [2 .. n])
+    (fmap (calc pg) [2 .. n])
 
 day11 :: Int -> ((Int, Int), (Int, (Int, Int)))
 day11 sn =
   let pg = powerGrid sn
       pgs = powerLevels pg size
-      maxp = map (maximum . toIndexed) pgs
+      maxp = fmap (maximum . toIndexed) pgs
       cord = snd $ maxp !! 2
       pid = head $ S.sortBy (flip compare `on` snd) $ zip [1 ..] maxp
    in (cord, (fst pid, snd $ snd pid))
