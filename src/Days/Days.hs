@@ -20,6 +20,7 @@ import Days.Day8
 import Days.Day9
 import Days.Day10
 import Days.Day11
+import Days.Day12
 import Util
 
 day1 :: Str -> (Integer, Maybe Integer)
@@ -82,6 +83,7 @@ solutions =
     , (9, mkDay (day9, pure (477, 70851, 100 * 70851), (374690, 3009951158)))
     , (10, mkDay (day10, fileToStr "inputs/day10.txt", ("EKALLKLB", 10227)))
     , (11, mkDay (day11, pure 5034, ((235, 63),(16, (229, 251)))))
+    , (12, mkDay (day12, fileToStr "inputs/day12.txt", (Just 3230, Just 4400000000304)))
     ]
 
 extras :: IO ()

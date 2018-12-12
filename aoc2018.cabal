@@ -25,7 +25,8 @@ executable aoc2018
                        timeit, mtl, permutation, primes, array, astar,
                        random, assert, listsafe, JuicyPixels, vector,
                        unordered-containers, time, diagrams, diagrams-lib,
-                       diagrams-rasterific, palette, colour, text, lens, pointedlist,
+                       diagrams-rasterific, palette, colour, text,
+                       lens, pointedlist,
                        megaparsec, matrix, parallel
   other-modules:       Util
                        Days.Days
@@ -37,3 +38,4 @@ executable aoc2018
                        Days.Day9
                        Days.Day10
                        Days.Day11
+                       Days.Day12

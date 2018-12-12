@@ -97,7 +97,7 @@ day10 :: Str -> (String, Int)
 day10 (Str input) =
   let points = parsePoints input
       steps = iterate (map move) points
-      (n, _) = firstWith (<) (area . snd) $ zip [0 ..] steps
+      (n, _) = nWith 1 (<) (area . snd) $ zip [0 ..] steps
    in ("EKALLKLB", n)
 
 textAt :: Double -> Double -> String -> Diagram
@@ -107,7 +107,7 @@ day10Draw :: Str -> IO ()
 day10Draw (Str input) =
   let points = parsePoints input
       steps = zip [0 ..] $ iterate (map move) points
-      (n, _) = firstWith (<) (area . snd) steps
+      (n, _) = nWith 1 (<) (area . snd) steps
       selected = take 20 $ drop (n - 10) steps
       frames = map (_2 `over` toDiagram) selected
       e = view D.envelope $ snd $ head frames

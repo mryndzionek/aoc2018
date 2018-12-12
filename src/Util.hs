@@ -12,7 +12,7 @@ module Util
   , fileToStr
   , printSolution
   , firstRepeated
-  , firstWith
+  , nWith
   ) where
 
 import Control.Monad.State
@@ -93,5 +93,10 @@ firstRepeated xs =
       g = scanl f (head xs, Set.empty) (tail xs)
    in fst <$> headMay (dropWhile (\(a, b) -> not $ Set.member a b) g)
 
-firstWith :: (b1 -> b1 -> Bool) -> (b2 -> b1) -> [b2] -> b2
-firstWith f g a = fst . head $ dropWhile (not . uncurry (f `on` g)) $ zip a (tail a)
+
+nWith :: Int -> (a -> a -> Bool) -> (c -> a) -> [c] -> c
+nWith n f g xs =
+  fst . head $ dropWhile (not . cnd (flip f) g . snd) $ zip xs (wnd n xs)
+  where
+    wnd n' xs' = drop (n + 1) $ scanl' (\b a -> a : take n' b) [] xs'
+    cnd f' g' xs'' = and $ zipWith (f' `on` g') xs'' (tail xs'')
