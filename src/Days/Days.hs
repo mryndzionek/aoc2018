@@ -23,6 +23,7 @@ import Days.Day11
 import Days.Day12
 import Days.Day13
 import Days.Day14
+import Days.Day15
 import Util
 
 day1 :: Str -> (Integer, Maybe Integer)
@@ -83,11 +84,12 @@ solutions =
           , ("MNOUBYITKXZFHQRJDASGCPEVWL", 893)))
     , (8, mkDay (day8, fileToStr "inputs/day8.txt", (43996, 35189)))
     , (9, mkDay (day9, pure (477, 70851, 100 * 70851), (374690, 3009951158)))
-    , (10, mkDay (day10, fileToStr "inputs/day10.txt", ("EKALLKLB", 10227)))
+    , (10, mkDay (day10, fileToStr "inputs/day10.txt", ("EKALLKLB", Just 10227)))
     , (11, mkDay (day11, pure 5034, ((235, 63),(16, (229, 251)))))
     , (12, mkDay (day12, fileToStr "inputs/day12.txt", (Just 3230, Just 4400000000304)))
     , (13, mkDay (day13, fileToStr "inputs/day13.txt", ((116, 91), (8, 23))))
     , (14, mkDay (day14, pure 793061, (4138145721, 20276284)))
+    , (15, mkDay (day15, fileToStr "inputs/day15.txt", 239010))
     ]
 
 extras :: IO ()

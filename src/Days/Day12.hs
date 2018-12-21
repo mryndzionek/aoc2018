@@ -47,7 +47,7 @@ day12 (Str input) =
       diffs :: [Int] -> Maybe [Int]
       diffs as = zipWith (-) <$> tail as <*> pure as
       findCycle :: [Int] -> Maybe (Int, Int, Int)
-      findCycle xs = nWith 10 (==) (view _3) . zip3 [0 ..] xs <$> diffs xs
+      findCycle xs = zip3 [0 ..] xs <$> diffs xs >>= nWith 10 (==) (view _3)
       countPlants l a =
         sum $
         zipWith

@@ -24,9 +24,6 @@ genCords :: (Int, Int) -> (Int, Int) -> Int -> Set.Set (Int, Int)
 genCords (x1, y1) (x2, y2) d' =
   Set.fromList [(x, y) | y <- [y1 - d' .. y2 + d'], x <- [x1 - d' .. x2 + d']]
 
-manhattan :: Num a => (a, a) -> (a, a) -> a
-manhattan (x1, y1) (x2, y2) = abs (x2 - x1) + abs (y2 - y1)
-
 getCordMap ::
      [(Int, Int)] -> Set.Set (Int, Int) -> Map.Map (Int, Int) (Int, Int)
 getCordMap pts c =

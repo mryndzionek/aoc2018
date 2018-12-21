@@ -5,7 +5,7 @@ module Days.Day10
 
 import Control.Lens hiding ((#))
 import Control.Monad (void)
-import Data.Maybe (fromMaybe)
+import Data.Maybe (fromMaybe, fromJust)
 import Data.Void
 
 import Text.Megaparsec hiding (State, parse)
@@ -93,11 +93,11 @@ area pts =
       h = maximum ys - minimum ys
    in w * h
 
-day10 :: Str -> (String, Int)
+day10 :: Str -> (String, Maybe Int)
 day10 (Str input) =
   let points = parsePoints input
       steps = iterate (map move) points
-      (n, _) = nWith 1 (<) (area . snd) $ zip [0 ..] steps
+      n = fst <$> nWith 1 (<) (area . snd) (zip [0 ..] steps)
    in ("EKALLKLB", n)
 
 textAt :: Double -> Double -> String -> Diagram
@@ -107,7 +107,7 @@ day10Draw :: Str -> IO ()
 day10Draw (Str input) =
   let points = parsePoints input
       steps = zip [0 ..] $ iterate (map move) points
-      (n, _) = nWith 1 (<) (area . snd) steps
+      n = fromJust $ fst <$> nWith 1 (<) (area . snd) steps
       selected = take 20 $ drop (n - 10) steps
       frames = map (_2 `over` toDiagram) selected
       e = view D.envelope $ snd $ head frames
@@ -117,4 +117,3 @@ day10Draw (Str input) =
            textAt 1000 (-1000) (show n') <> D.setEnvelope e d #
            D.bg midnightBlue)
         frames
-
