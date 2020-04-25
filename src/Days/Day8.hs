@@ -41,7 +41,7 @@ sum2 = do
       then sum meta
       else sum . mapMaybe (\i -> childr S.!! (i - 1)) $ meta
 
-parse :: Parser Int -> String -> Either (ParseError Char Void) Int
+parse :: Parser Int -> String -> Either (ParseErrorBundle String Void) Int
 parse p = runParser p ""
 
 day8 :: Str -> (Int, Int)
