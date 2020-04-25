@@ -1,3 +1,5 @@
+{-# LANGUAGE MultiWayIf #-}
+
 module Days.Day15
   ( day15
   ) where
@@ -5,9 +7,6 @@ module Days.Day15
 import Control.Applicative ((<|>))
 import Control.Lens
 import Control.Monad (guard)
-import Control.Parallel.Strategies
-import Data.Graph.AStar
-import qualified Data.HashSet as HS
 import Data.List (foldl', scanl', sortBy)
 import Data.Matrix hiding ((<|>), toList, trace)
 import Data.Maybe
@@ -60,11 +59,11 @@ type Map = Matrix Loc
 
 type Pos = (Int, Int)
 
-getMap :: String -> Map
-getMap input =
+getMap :: Int -> String -> Map
+getMap ae input =
   let charToLoc c =
         case c of
-          'E' -> U (Unit Elf 3 200 False)
+          'E' -> U (Unit Elf ae 200 False)
           'G' -> U (Unit Goblin 3 200 False)
           '#' -> C Wall
           _ -> C Open
@@ -99,11 +98,7 @@ getUnit m (y, x) =
     _ -> Nothing
 
 inRange :: Map -> Pos -> [Pos]
-inRange m p = filter (\(y, x) -> isOpen m (y, x)) $ neighbors4 p
-
-shortestPath :: Map -> Pos -> Pos -> Maybe [Pos]
-shortestPath m pa pb =
-  aStar (HS.fromList . inRange m) manhattan (manhattan pa) (== pb) pa
+inRange m p = filter (isOpen m) $ neighbors4 p
 
 move :: Map -> Pos -> Pos -> Maybe Map
 move cur src dst = do
@@ -150,18 +145,26 @@ attackM cur p = do
   m <- assert (manhattan p opp == 1) $ attack cur p opp
   return (m, p)
 
+nearEnemy :: Map -> (Int, Int) -> Unit -> Bool
+nearEnemy m p u =
+  fromMaybe False $ do
+    c <- sequence $ filter isJust $ map (getUnit m) (neighbors4 p)
+    return $ any ((/= _typ u) . _typ) c
+
+search :: Unit -> Map -> S.Set Pos -> S.Set (Int, Pos, Pos) -> Maybe Pos
+search u m seen s = do
+  ((dist, dest, start), q) <- S.minView s
+  if | S.member dest seen -> search u m seen q
+     | nearEnemy m dest u -> Just start
+     | otherwise -> search u m (S.insert dest seen)
+                                 (foldl' (flip S.insert) q
+                                     [(dist+1, dest', start) | dest' <- inRange m dest])
+
 moveM :: Map -> Pos -> Maybe (Map, Pos)
 moveM cur p = do
   u <- getUnit cur p
   guard $ not $ _moved u
-  let tgs = S.fromList $ getTargetsPos cur (_typ u)
-      inr =
-        S.toList $ foldl' S.union S.empty $ S.map (S.fromList . inRange cur) tgs
-      pths =
-        sortBy
-          (comparing length <> comparing (fst . last) <> comparing (snd . last)) $
-        catMaybes $ parMap rdeepseq (shortestPath cur p) inr
-  p' <- listToMaybe pths >>= listToMaybe
+  p' <- search u cur S.empty $ S.fromList [(0, start, start) | start <- inRange cur p]
   m <- assert (manhattan p p' == 1) $ move cur p p'
   return (m, p')
 
@@ -176,23 +179,24 @@ action cur p =
 turn :: Map -> [Map]
 turn cur = scanl' action (prepare cur) $ getUnitsPos cur
 
-day15 :: Str -> Int
+day15 :: Str -> (Int, Int)
 day15 (Str input) =
-  let m1 = getMap input
+  let m1 = getMap 3 input
+      ec = length . filter ((== Elf) . _typ) . units $ m1
       units m = mapMaybe (getUnit m) (getUnitsPos m)
       isOver =
         (\a -> all ((== Goblin) . _typ) a || all ((== Elf) . _typ) a) . units
       battle m =
-        let ms = break (any isOver) $ iterate (turn . last) [m]
+        let ms =
+              break (any isOver) $ tail $ map init $ iterate (turn . last) [m]
          in fst ms ++ [head $ snd ms]
-      isFull ms = length ms == length (takeWhile (not . isOver) ms) + 1
-      outcome (n, m) = n * sum (map _hit $ units m)
-      outcome1 =
-        outcome .
-        (\(n, ms) ->
-           if isFull ms
-             then (n, last ms)
-             else (n - 1, last ms)) .
-        last $
-        zip [0 ..] $ battle m1
-   in outcome1
+      outcome m =
+        let a = last $ zip [0 ..] $ battle m
+            points (n, m') = (n * sum (map _hit $ units m'), m')
+         in points $ (\(n, ms) -> (n, last ms)) a
+      outcome2 =
+        head $
+        dropWhile ((/= ec) . length . filter ((== Elf) . _typ) . units . snd) $
+        fmap (\n -> outcome (getMap n input)) [4 ..]
+      outcome1 = outcome m1
+   in (fst outcome1, fst outcome2)

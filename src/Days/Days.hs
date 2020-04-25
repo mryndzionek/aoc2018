@@ -89,7 +89,7 @@ solutions =
     , (12, mkDay (day12, fileToStr "inputs/day12.txt", (Just 3230, Just 4400000000304)))
     , (13, mkDay (day13, fileToStr "inputs/day13.txt", ((116, 91), (8, 23))))
     , (14, mkDay (day14, pure 793061, (4138145721, 20276284)))
-    , (15, mkDay (day15, fileToStr "inputs/day15.txt", 239010))
+    , (15, mkDay (day15, fileToStr "inputs/day15.txt", (239010, 62468)))
     ]
 
 extras :: IO ()
