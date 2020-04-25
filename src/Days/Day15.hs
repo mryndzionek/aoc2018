@@ -6,7 +6,6 @@ import Control.Applicative ((<|>))
 import Control.Lens
 import Control.Monad (guard)
 import Control.Parallel.Strategies
-import Data.Function (on)
 import Data.Graph.AStar
 import qualified Data.HashSet as HS
 import Data.List (foldl', scanl', sortBy)
@@ -82,10 +81,10 @@ getUnitsPos m =
     , let ut = getUnit m (y, x)
     ]
 
-byReading :: (a -> Pos) -> [a] -> [a]
-byReading f = sortBy (cmp `on` f)
+byReading :: (Ord a) => (Pos -> a) -> [Pos] -> [Pos]
+byReading f = sortBy cmp
   where
-    cmp = comparing fst <> comparing snd
+    cmp = comparing f <> comparing fst <> comparing snd
 
 isOpen :: Map -> Pos -> Bool
 isOpen m (y, x) =
@@ -144,12 +143,10 @@ attackM cur p = do
   guard $ not $ _moved u
   let tgs = S.fromList $ getTargetsPos cur (_typ u)
       cand =
-        sortBy (compare `on` (fmap _hit . getUnit cur)) $
+        byReading (fmap _hit . getUnit cur) $
         S.toList $ S.intersection tgs $ S.fromList $ neighbors4 p
-  lh <- _hit <$> (listToMaybe cand >>= getUnit cur)
   opp <-
-    listToMaybe $
-    byReading id $ takeWhile (maybe False ((== lh) . _hit) . getUnit cur) cand
+    listToMaybe cand
   m <- assert (manhattan p opp == 1) $ attack cur p opp
   return (m, p)
 
@@ -161,12 +158,10 @@ moveM cur p = do
       inr =
         S.toList $ foldl' S.union S.empty $ S.map (S.fromList . inRange cur) tgs
       pths =
-        sortBy (compare `on` length) $
+        sortBy
+          (comparing length <> comparing (fst . last) <> comparing (snd . last)) $
         catMaybes $ parMap rdeepseq (shortestPath cur p) inr
-  p' <-
-    listToMaybe $
-    byReading id
-    (head <$> takeWhile ((== (length $ head pths)) . length) pths)
+  p' <- listToMaybe pths >>= listToMaybe
   m <- assert (manhattan p p' == 1) $ move cur p p'
   return (m, p')
 
