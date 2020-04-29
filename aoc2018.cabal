@@ -27,7 +27,7 @@ executable aoc2018
                        unordered-containers, time, diagrams, diagrams-lib,
                        diagrams-rasterific, palette, colour, text,
                        lens, pointedlist,
-                       megaparsec, matrix, parallel
+                       megaparsec, matrix, parallel, bytestring
   other-modules:       Util
                        Days.Days
                        Days.Day3

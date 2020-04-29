@@ -98,3 +98,4 @@ extras = do
   fileToStr "inputs/day6.txt" >>= day6Draw
   fileToStr "inputs/day7.txt" >>= day7Draw
   fileToStr "inputs/day10.txt" >>= day10Draw
+  fileToStr "inputs/day15.txt" >>= day15Draw

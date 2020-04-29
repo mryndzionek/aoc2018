@@ -25,6 +25,14 @@ Schedule for 5 workers
 
 ![day10](images/day10.gif)
 
+### Day 15:
+
+Part 1
+![day15_1](images/day15_1.gif)
+
+Part 2
+![day15_2](images/day15_2.gif)
+
 ## Solutions
 
 Run with: `stack exec -- aoc2018 +RTS -N2`
