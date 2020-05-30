@@ -60,10 +60,10 @@ day3Draw input =
       toSquare (i, x, y, w, h) =
         let c =
               if i == no
-                then red
-                else colors !! fromIntegral (rem i 8)
+                then red `withOpacity` 1.0
+                else (colors !! fromIntegral (rem i 8)) `withOpacity` 0.5
          in ( p2 (fromIntegral x, fromIntegral y)
-            , rect (fromIntegral w) (fromIntegral h) # lw none # fc c)
+            , ((text (show i) # fontSize 8) <> rect (fromIntegral w) (fromIntegral h) # lc black # lw 1 # fcA c) # alignBL)
       colors = brewerSet Set2 8
       example = position (map toSquare claims) # bg grey
    in renderRasterific
