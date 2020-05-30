@@ -20,9 +20,9 @@ mayFile fp = do
     Left _ -> return Nothing
 
 getInput :: String -> IO (Maybe String)
-getInput i = return number <|> mayFile i <|> return (Just i)
+getInput i = return nbr <|> mayFile i <|> return (Just i)
   where
-    number = show <$> (readMay i :: Maybe Int)
+    nbr = show <$> (readMay i :: Maybe Int)
 
 handle :: [String] -> IO ()
 handle (a:_) =

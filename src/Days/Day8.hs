@@ -8,13 +8,11 @@ import Data.Maybe (mapMaybe)
 import Data.Void
 import qualified Data.List.Safe as S
 
-import Text.Megaparsec hiding (State, parse)
 import Text.Megaparsec.Char
 import qualified Text.Megaparsec.Char.Lexer as Lx
+import Text.Megaparsec hiding (State, parse, count)
 
 import Util
-
-type Parser = Parsec Void String
 
 lexeme :: Parser a -> Parser a
 lexeme = Lx.lexeme space

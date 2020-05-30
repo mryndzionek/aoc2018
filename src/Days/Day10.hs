@@ -6,9 +6,8 @@ module Days.Day10
 import Control.Lens hiding ((#))
 import Control.Monad (void)
 import Data.Maybe (fromMaybe, fromJust)
-import Data.Void
 
-import Text.Megaparsec hiding (State, parse)
+import Text.Megaparsec hiding (State, parse, count)
 import Text.Megaparsec.Char
 import qualified Text.Megaparsec.Char.Lexer as Lx
 
@@ -25,7 +24,6 @@ data Point = Point
   , _vy :: Int
   } deriving (Show, Eq, Ord)
 
-type Parser = Parsec Void String
 type Diagram = D.QDiagram B D.V2 Double D.Any
 
 sc :: Parser ()
